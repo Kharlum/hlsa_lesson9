@@ -1,0 +1,8 @@
+- key: words
+  title: EN words
+  fields:
+
+    - name: "@timestamp"
+      type: date
+      required: true
+      example: "2016-05-23T08:05:34.853Z"

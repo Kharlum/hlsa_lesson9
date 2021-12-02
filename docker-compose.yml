@@ -1,0 +1,50 @@
+networks:
+  elk:
+    driver: bridge
+    name: elk_stack
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.14.2
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      discovery.type: single-node
+    networks:
+      elk:
+        aliases:
+          - elasticsearch.local
+
+  kibana:
+    image: kibana:7.14.2
+    container_name: kibana
+    restart: always
+    ports:
+      - 5602:5601
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch.local:9200
+    networks:
+      elk:
+        aliases:
+          - kibana.local
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.14.2
+    container_name: filebeat
+    restart: always
+    networks:
+      elk:
+        aliases:
+          - filebeat.local
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./words_alpha.txt:/usr/share/filebeat/words/words_alpha.txt
+      - ./fields.yml:/usr/share/filebeat/fields.yml:ro
+    depends_on:
+      - elasticsearch
+      - kibana

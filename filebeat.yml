@@ -1,0 +1,19 @@
+setup.kibana.host: kibana.local:5601
+setup.ilm.enabled: false
+setup.template.enabled: true
+setup.template.overwrite: true
+setup.template.type: index
+setup.template.name: "english_words"
+setup.template.fields: /usr/share/filebeat/fields.yml
+setup.template.pattern: "english_words"
+setup.template.settings_source.enabled: false
+
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /usr/share/filebeat/words/words_alpha.txt
+
+output.elasticsearch:
+  hosts: ["elasticsearch.local:9200"]
+  index: "english_words"
